@@ -25,6 +25,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+
 string imageUrl = "https://i.imgur.com/JP3km0A.jpeg";
 
 if (sqlConnectionStringNotFound)
