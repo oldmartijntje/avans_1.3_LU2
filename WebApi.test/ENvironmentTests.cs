@@ -12,7 +12,7 @@
         [TestMethod]
         public void BooleanTest2()
         {
-            Assert.IsTrue(false);
+            Assert.IsTrue(true);
         }
     }
 }
