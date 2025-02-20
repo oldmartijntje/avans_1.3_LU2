@@ -1,5 +1,6 @@
 using LeerUitkomst2.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using ProjectMap.WebApi.Repositories;
 
 namespace LeerUitkomst2.WebApi.Controllers;
 
@@ -12,65 +13,63 @@ public class EnvironmentController : ControllerBase
         new Environment2D { Id = 1, Name = "Env1", MaxHeight = 50, MaxLength = 100 },
         new Environment2D { Id = 2, Name = "Env2", MaxHeight = 75, MaxLength = 150 }
     };
+    private readonly EnvironmentRepository _environment2DRepository;
+    private readonly ILogger<EnvironmentController> _logger;
 
-    [HttpGet]
-    public ActionResult<IEnumerable<Environment2D>> GetAll()
+    public EnvironmentController(EnvironmentRepository weatherForecastRepository, ILogger<EnvironmentController> logger)
     {
-        // db select
-        return Ok(_testData);
+        _environment2DRepository = weatherForecastRepository;
+        _logger = logger;
     }
 
-    [HttpGet("{id}")]
-    public ActionResult<Environment2D> GetById(int id)
+    [HttpGet(Name = "ReadEnvironments")]
+    public async Task<ActionResult<IEnumerable<Environment2D>>> Get()
     {
-        // db select specifstick
-        var environment = _testData.Find(e => e.Id == id);
+        var env2D = await _environment2DRepository.ReadAsync();
+        return Ok(env2D);
+    }
+
+    [HttpGet("{EnvironmentId}", Name = "ReadEnvironment")]
+    public async Task<ActionResult<Environment2D>> Get(int environmentId)
+    {
+        var environment = await _environment2DRepository.ReadAsync(environmentId);
         if (environment == null)
             return NotFound();
+
         return Ok(environment);
     }
 
-    [HttpPost]
-    public ActionResult<Environment2D> Create(Environment2D environment)
+    [HttpPost(Name = "CreateEnvironment")]
+    public async Task<ActionResult> Add(Environment2D environment)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-            
-        // db create
-        environment.Id = _testData.Count + 1;
-        _testData.Add(environment);
-            
-        return CreatedAtAction(nameof(GetById), new { id = environment.Id }, environment);
+        var createdEnvironment = await _environment2DRepository.InsertAsync(environment);
+        return Created();
     }
 
-    [HttpPut("{id}")]
-    public IActionResult Update(int id, Environment2D environment)
+    [HttpPut("{environmentId}", Name = "UpdateEnvironment")]
+    public async Task<ActionResult> Update(int environmentId, Environment2D environment)
     {
-        if (id != environment.Id || !ModelState.IsValid)
-            return BadRequest();
-            
-        // db put
-        var existing = _testData.Find(e => e.Id == id);
-        if (existing == null)
+        var existingEnvironment = await _environment2DRepository.ReadAsync(environmentId);
+
+        if (existingEnvironment == null)
             return NotFound();
-            
-        existing.Name = environment.Name;
-        existing.MaxHeight = environment.MaxHeight;
-        existing.MaxLength = environment.MaxLength;
-            
-        return NoContent();
+
+        await _environment2DRepository.UpdateAsync(environment);
+
+        return Ok(environment);
     }
 
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    [HttpDelete("{environmentId}", Name = "DeleteEnvironmentById")]
+    public async Task<IActionResult> Update(int environmentId)
     {
-        // db delete
-        var environment = _testData.Find(e => e.Id == id);
-        if (environment == null)
+        var existingEnvironment = await _environment2DRepository.ReadAsync(environmentId);
+
+        if (existingEnvironment == null)
             return NotFound();
-            
-        _testData.Remove(environment);
-        return NoContent();
+
+        await _environment2DRepository.DeleteAsync(environmentId);
+
+        return Ok();
     }
 }
 

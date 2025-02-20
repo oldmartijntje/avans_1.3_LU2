@@ -4,7 +4,6 @@ namespace LeerUitkomst2.WebApi.Models;
 
 public class Environment2D
 {
-    [Required]
     public int Id { get; set; }
 
     public string Name { get; set; }
