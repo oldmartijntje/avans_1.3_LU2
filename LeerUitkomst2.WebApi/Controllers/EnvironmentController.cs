@@ -17,11 +17,15 @@ public class EnvironmentController : ControllerBase
     };
     private readonly EnvironmentRepository _environment2DRepository;
     private readonly ILogger<EnvironmentController> _logger;
+    private readonly IAuthenticationService _authService;
 
-    public EnvironmentController(EnvironmentRepository weatherForecastRepository, ILogger<EnvironmentController> logger)
+    public EnvironmentController(EnvironmentRepository weatherForecastRepository, 
+        ILogger<EnvironmentController> logger,
+        IAuthenticationService authService)
     {
         _environment2DRepository = weatherForecastRepository;
         _logger = logger;
+        _authService = authService;
     }
 
     [HttpGet(Name = "ReadEnvironments")]
@@ -29,6 +33,7 @@ public class EnvironmentController : ControllerBase
     {
         var env2D = await _environment2DRepository.ReadAsync();
         return Ok(env2D);
+        // this._authService.GetCurrentAuthenticatedUserId();
     }
 
     [HttpGet("{environmentId}", Name = "ReadEnvironment")]
