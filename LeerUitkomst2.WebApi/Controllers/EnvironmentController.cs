@@ -1,9 +1,11 @@
 using LeerUitkomst2.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMap.WebApi.Repositories;
 
 namespace LeerUitkomst2.WebApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class EnvironmentController : ControllerBase

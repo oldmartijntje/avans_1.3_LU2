@@ -17,6 +17,22 @@ builder.Services.AddTransient<EnvironmentRepository, EnvironmentRepository>(o =>
 
 // Add services to the container.
 
+builder.Services
+    .AddIdentityApiEndpoints<IdentityUser>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+        // add options
+        options.Password.RequiredLength = 10;
+    })
+    .AddRoles<IdentityRole>()
+    .AddDapperStores(options =>
+    {
+        options.ConnectionString = sqlConnectionString;
+    });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IAuthenticationService, AspNetIdentityAuthenticationService>();
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -31,8 +47,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-//app.MapGroup("/account").MapIdentityApi<IdentityUser>();
 
 string imageUrl = "https://i.imgur.com/JP3km0A.jpeg";
 
@@ -76,7 +90,7 @@ catImage.addEventListener('click', () => {{
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.MapGroup("/account").MapIdentityApi<IdentityUser>();
 app.MapControllers();
 
 app.Run();
