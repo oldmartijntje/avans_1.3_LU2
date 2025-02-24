@@ -29,7 +29,7 @@ public class EnvironmentController : ControllerBase
         return Ok(env2D);
     }
 
-    [HttpGet("{EnvironmentId}", Name = "ReadEnvironment")]
+    [HttpGet("{environmentId}", Name = "ReadEnvironment")]
     public async Task<ActionResult<Environment2D>> Get(int environmentId)
     {
         var environment = await _environment2DRepository.ReadAsync(environmentId);
@@ -46,10 +46,10 @@ public class EnvironmentController : ControllerBase
         return Created();
     }
 
-    [HttpPut("{environmentId}", Name = "UpdateEnvironment")]
-    public async Task<ActionResult> Update(int environmentId, Environment2D environment)
+    [HttpPut(Name = "UpdateEnvironment")]
+    public async Task<ActionResult> Update(Environment2D environment)
     {
-        var existingEnvironment = await _environment2DRepository.ReadAsync(environmentId);
+        var existingEnvironment = await _environment2DRepository.ReadAsync(environment.Id);
 
         if (existingEnvironment == null)
             return NotFound();

@@ -1,7 +1,7 @@
 ﻿namespace WebApi.test
 {
     [TestClass]
-    public sealed class ENvironmentTests
+    public sealed class EnvironmentTests
     {
         [TestMethod]
         public void BooleanTest()

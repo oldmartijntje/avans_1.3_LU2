@@ -2,6 +2,7 @@ using ProjectMap.WebApi.Repositories;
 using static System.Net.Mime.MediaTypeNames;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ builder.Services.AddTransient<EnvironmentRepository, EnvironmentRepository>(o =>
 
 // Add services to the container.
 
+builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -26,8 +28,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
+//app.MapGroup("/account").MapIdentityApi<IdentityUser>();
 
 string imageUrl = "https://i.imgur.com/JP3km0A.jpeg";
 
