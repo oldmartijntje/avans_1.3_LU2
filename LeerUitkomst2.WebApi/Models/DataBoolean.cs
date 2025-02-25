@@ -5,6 +5,7 @@
         public bool Value { get; }
         public string Message { get; }
         public string LoggerMessage { get; }
+        public object ExtraData = null;
 
         public DataBoolean(bool value, string message)
         {
@@ -18,29 +19,40 @@
             Message = message;
             LoggerMessage = loggerMessage;
         }
-        public DataBoolean ChangeDataBoolean()
+        public DataBoolean CloneDataBoolean()
         {
-            return this.ChangeDataBoolean(this.Value, this.Message, this.LoggerMessage);
+            return this.CloneDataBoolean(this.Value, this.Message, this.LoggerMessage);
         }
-        public DataBoolean ChangeDataBoolean(string message)
+        public DataBoolean CloneDataBoolean(string message)
         {
-            return this.ChangeDataBoolean(this.Value, message, message);
+            return this.CloneDataBoolean(this.Value, message, message);
         }
-        public DataBoolean ChangeDataBoolean(string message, string loggerMessage)
+        public DataBoolean CloneDataBoolean(string message, string loggerMessage)
         {
-            return this.ChangeDataBoolean(this.Value, message, loggerMessage);
+            return this.CloneDataBoolean(this.Value, message, loggerMessage);
         }
-        public DataBoolean ChangeDataBoolean(bool value)
+        public DataBoolean CloneDataBoolean(bool value)
         {
-            return this.ChangeDataBoolean(value, this.Message, this.LoggerMessage);
+            return this.CloneDataBoolean(value, this.Message, this.LoggerMessage);
         }
-        public DataBoolean ChangeDataBoolean(bool value, string message)
+        public DataBoolean CloneDataBoolean(bool value, string message)
         {
-            return this.ChangeDataBoolean(value, message, message);
+            return this.CloneDataBoolean(value, message, message);
         }
-        public DataBoolean ChangeDataBoolean(bool value, string message, string loggerMessage)
+        public DataBoolean CloneDataBoolean(bool value, string message, string loggerMessage)
         {
-            return new DataBoolean(value, message, loggerMessage);
+            return this.CloneDataBoolean(value, message, loggerMessage, this.ExtraData);
+        }
+        public DataBoolean CloneDataBoolean(bool value, string message, string loggerMessage, object data)
+        {
+            var dataBoolean = new DataBoolean(value, message, loggerMessage);
+            return dataBoolean.SetData(data);
+        }
+
+        public DataBoolean SetData(object data)
+        {
+            this.ExtraData = data;
+            return this;
         }
     }
 }

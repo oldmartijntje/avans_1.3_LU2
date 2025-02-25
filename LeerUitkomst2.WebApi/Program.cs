@@ -14,6 +14,7 @@ if (sqlConnectionStringNotFound)
     throw new InvalidProgramException("Configuration variable SqlConnectionString not found");
 
 builder.Services.AddTransient<EnvironmentRepository, EnvironmentRepository>(o => new EnvironmentRepository(sqlConnectionString));
+builder.Services.AddTransient<Object2DRepository, Object2DRepository>(o => new Object2DRepository(sqlConnectionString));
 
 // Add services to the container.
 

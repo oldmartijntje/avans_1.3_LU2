@@ -2,6 +2,7 @@ using LeerUitkomst2.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMap.WebApi.Repositories;
+using System;
 
 namespace LeerUitkomst2.WebApi.Controllers;
 
@@ -11,16 +12,19 @@ namespace LeerUitkomst2.WebApi.Controllers;
 public class EnvironmentController : ControllerBase
 {
     private readonly EnvironmentRepository _environment2DRepository;
+    private readonly Object2DRepository _object2DRepository;
     private readonly ILogger<EnvironmentController> _logger;
     private readonly IAuthenticationService _authService;
 
-    public EnvironmentController(EnvironmentRepository weatherForecastRepository, 
+    public EnvironmentController(EnvironmentRepository environmentRepository,
+        Object2DRepository objectRepository,
         ILogger<EnvironmentController> logger,
         IAuthenticationService authService)
     {
-        _environment2DRepository = weatherForecastRepository;
+        _environment2DRepository = environmentRepository;
         _logger = logger;
         _authService = authService;
+        _object2DRepository = objectRepository;
     }
 
     [HttpPost(Name = "CreateEnvironment")]
@@ -39,8 +43,50 @@ public class EnvironmentController : ControllerBase
         {
             return BadRequest(allowedOrNot.Message);
         }
-        var createdEnvironment = await _environment2DRepository.InsertAsync(environment, userId);
+        var createdEnvironment = await _environment2DRepository.CreateEnvironmentByUser(environment, userId);
         return Ok(createdEnvironment);
+    }
+
+    [HttpGet(Name = "GetEnvironments")]
+    public async Task<ActionResult<IEnumerable<Environment2D>>> Get()
+    {
+        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        if (userId == null)
+        {
+            return BadRequest();
+        }
+        var environmentList = await _environment2DRepository.GetEnvironmentByUser(userId);
+        return Ok(environmentList);
+    }
+
+    [HttpGet("{environmentId}", Name = "GetEnvironmentData")]
+    public async Task<ActionResult<IEnumerable<Environment2D>>> Get(int environmentId)
+    {
+        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        if (userId == null)
+        {
+            return BadRequest();
+        }
+        DatabaseBundle<Environment2D> dataBundle = new DatabaseBundle<Environment2D>()
+        {
+            UserId = userId,
+            DatabaseRepository = _environment2DRepository,
+            RequestedId = environmentId
+        };
+        var authResponse = await Validator.Environment2DAccessCheck(dataBundle);
+        this._logger.LogInformation($"User '{userId}' tried to open environment '{environmentId}': '{authResponse.LoggerMessage}'");
+        if (authResponse.Value == false)
+        {
+            return BadRequest(authResponse.Message);
+        }
+        var objects = await this._object2DRepository.GetAllByEnvironmentId(environmentId);
+        var response = new
+        {
+            EnvironmentId = environmentId,
+            EnvironmentData = authResponse.ExtraData,
+            EnvironmentObjects = objects
+        };
+        return Ok(response);
     }
 
     //[HttpGet(Name = "ReadEnvironments")]

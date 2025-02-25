@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace ProjectMap.WebApi.Repositories
 {
-    public class EnvironmentRepository
+    public class EnvironmentRepository: IDatabaseRepository<Environment2D>
     {
         private readonly string sqlConnectionString;
 
@@ -31,7 +31,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task<AnonymousEnvironment2D> InsertAsync(Environment2DTemplate environment, string userId)
+        public async Task<Environment2D> CreateEnvironmentByUser(Environment2DTemplate environment, string userId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -50,13 +50,30 @@ namespace ProjectMap.WebApi.Repositories
 
                 var environmentId = await sqlConnection.QuerySingleAsync<int>(query, parameters);
 
-                return new AnonymousEnvironment2D
+                return new Environment2D
                 {
                     Id = environmentId,
                     Name = environment.Name,
                     MaxHeight = environment.MaxHeight,
-                    MaxLength = environment.MaxLength
+                    MaxLength = environment.MaxLength,
+                    UserId = userId
                 };
+            }
+        }
+
+        public async Task<Environment2D> GetSingleByUser(string userId, int requestedId)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                return await sqlConnection.QuerySingleOrDefaultAsync<Environment2D>("SELECT * FROM [Environment2D] WHERE Id = @requestedId", new { requestedId });
+            }
+        }
+
+        public async Task<IEnumerable<Environment2D>> GetEnvironmentByUser(string userId)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                return await sqlConnection.QueryAsync<Environment2D>("SELECT * FROM [Environment2D] WHERE UserId = @userId", new { userId });
             }
         }
 

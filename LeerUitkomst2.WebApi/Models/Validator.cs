@@ -46,5 +46,25 @@
             }
             return new DataBoolean(true, "Allowed");
         }
+    
+        /// <summary>
+        /// Checks wether or not the user logged in has access to the environment. And wehter it even exists in the first place.
+        /// </summary>
+        /// <param name="dataBundle">This knows who the user is, what they want to access, and what DB to use</param>
+        /// <returns></returns>
+        public static async Task<DataBoolean> Environment2DAccessCheck(DatabaseBundle<Environment2D> dataBundle)
+        {
+            var environment = await dataBundle.DatabaseRepository.GetSingleByUser(dataBundle.UserId, dataBundle.RequestedId);
+            if (environment == null)
+            {
+                return new DataBoolean(false, "This environment does not exist in this context.", "404");
+            }
+            if (environment.UserId != dataBundle.UserId)
+            {
+                return new DataBoolean(false, "This environment does not exist in this context.", "403");
+            }
+            return new DataBoolean(true, "Success!").SetData(environment);
+
+        }
     }
 }
