@@ -15,12 +15,18 @@ public class Environment2DTemplate
 
 }
 
-
-
-public class Environment2D: Environment2DTemplate
+/// <summary>
+/// We don't want to give back the user id to the user.
+/// </summary>
+public class AnonymousEnvironment2D: Environment2DTemplate
 {
     public int Id { get; set; }
+}
 
+
+
+public class Environment2D: AnonymousEnvironment2D
+{
     public string UserId { get; set; }
 
 }

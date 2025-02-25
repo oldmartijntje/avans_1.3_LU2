@@ -5,7 +5,7 @@ using ProjectMap.WebApi.Repositories;
 
 namespace LeerUitkomst2.WebApi.Controllers;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class EnvironmentController : ControllerBase
@@ -32,14 +32,15 @@ public class EnvironmentController : ControllerBase
             return BadRequest();
         }
         var amountOfEnvironments = await _environment2DRepository.GetAmountByUser(userId);
-        if (Validator.AllowedToCreateEnvironment(amountOfEnvironments))
+        var environmentsNameList = await this._environment2DRepository.FindEnvironmentByName(userId, environment.Name);
+        DataBoolean allowedOrNot = Validator.AllowedToCreateEnvironment(environment, amountOfEnvironments, (List<Environment2D>)environmentsNameList);
+        this._logger.LogInformation($"User '{userId}' tried to create an environment: '{allowedOrNot.LoggerMessage}'");
+        if (allowedOrNot.Value == false)
         {
-            return BadRequest(amountOfEnvironments);
+            return BadRequest(allowedOrNot.Message);
         }
-
-
-        //var createdEnvironment = await _environment2DRepository.InsertAsync(environment);
-        return Ok(amountOfEnvironments);
+        var createdEnvironment = await _environment2DRepository.InsertAsync(environment, userId);
+        return Ok(createdEnvironment);
     }
 
     //[HttpGet(Name = "ReadEnvironments")]
