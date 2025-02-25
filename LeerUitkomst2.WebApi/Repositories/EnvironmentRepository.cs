@@ -13,6 +13,15 @@ namespace ProjectMap.WebApi.Repositories
             this.sqlConnectionString = sqlConnectionString;
         }
 
+        public async Task<int> GetAmountByUser(string userId)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                var amount = await sqlConnection.QuerySingleOrDefaultAsync<int>("SELECT COUNT(*) FROM [Environment2D] WHERE UserId = @userId", new { userId });
+                return amount;
+            }
+        }
+
         public async Task<Environment2D> InsertAsync(Environment2D environment)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
