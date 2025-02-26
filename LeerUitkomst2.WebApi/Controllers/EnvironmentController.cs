@@ -89,6 +89,35 @@ public class EnvironmentController : ControllerBase
         return Ok(response);
     }
 
+    [HttpDelete("{environmentId}", Name = "DeleteEnvironmentById")]
+    public async Task<IActionResult> Update(int environmentId)
+    {
+        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        if (userId == null)
+        {
+            return BadRequest();
+        }
+        DatabaseBundle<Environment2D> dataBundle = new DatabaseBundle<Environment2D>()
+        {
+            UserId = userId,
+            DatabaseRepository = _environment2DRepository,
+            RequestedId = environmentId
+        };
+        var authResponse = await Validator.Environment2DAccessCheck(dataBundle);
+        this._logger.LogInformation($"User '{userId}' tried to delete '{environmentId}': '{authResponse.LoggerMessage}'");
+        if (authResponse.Value == false)
+        {
+            return BadRequest(authResponse.Message);
+        }
+        var deleteSuccess = await _environment2DRepository.DeleteAsync(environmentId);
+        this._logger.LogInformation($"User '{userId}' was authorized to delete '{environmentId}': '{deleteSuccess.LoggerMessage}'");
+        if (deleteSuccess.Value == false)
+        {
+            return BadRequest(deleteSuccess.Message);
+        }
+        return Ok(deleteSuccess.Message);
+    }
+
     //[HttpGet(Name = "ReadEnvironments")]
     //public async Task<ActionResult<IEnumerable<Environment2D>>> Get()
     //{

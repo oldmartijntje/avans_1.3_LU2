@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace ProjectMap.WebApi.Repositories
 {
-    public class EnvironmentRepository: IDatabaseRepository<Environment2D>
+    public class EnvironmentRepository : IDatabaseRepository<Environment2D>
     {
         private readonly string sqlConnectionString;
 
@@ -108,13 +108,33 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<DataBoolean> DeleteAsync(int id)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                await sqlConnection.ExecuteAsync("DELETE FROM [Environment2D] WHERE Id = @Id", new { id });
-            }
-        }
+                await sqlConnection.OpenAsync();
+                using (var transaction = sqlConnection.BeginTransaction())
+                {
+                    try
+                    {
+                        var query = @"
+                    DELETE FROM [Object2D] WHERE EnvironmentId = @Id;
+                    DELETE FROM [Environment2D] WHERE Id = @Id;
+                ";
+                        await sqlConnection.ExecuteAsync(query, new { id }, transaction);
 
+                        transaction.Commit();
+                        return new DataBoolean(true, "Success!");
+                    }
+                    catch (Exception ex)
+                    {
+                        // als 1 query faalt, wordt het gerollbacked.
+                        transaction.Rollback();
+                        return new DataBoolean(false, "No", ex.ToString());
+                    }
+                }
+            }
+
+        }
     }
 }
