@@ -48,7 +48,8 @@ public class Object2DController : ControllerBase
         {
             return BadRequest(authResponse.Message);
         }
-        return Ok();
+        var result = await this._object2DRepository.CreateObject(template);
+        return Ok(result);
 
     }
 

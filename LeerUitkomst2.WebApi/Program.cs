@@ -39,6 +39,17 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3030", builder =>
+    {
+        builder.WithOrigins("http://localhost:3030")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+// And then in the pipeline:
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -48,6 +59,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowLocalhost3030");
 
 string imageUrl = "https://i.imgur.com/JP3km0A.jpeg";
 

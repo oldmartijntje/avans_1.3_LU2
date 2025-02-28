@@ -26,5 +26,43 @@ namespace ProjectMap.WebApi.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Object2D> CreateObject(Object2DTemplate objectDesign)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                var parameters = new
+                {
+                    PrefabId = objectDesign.PrefabId,
+                    PositionX = objectDesign.PositionX,
+                    PositionY = objectDesign.PositionY,
+                    ScaleX = objectDesign.ScaleX,
+                    ScaleY = objectDesign.ScaleY,
+                    RotationZ = objectDesign.RotationZ,
+                    SortingLayer = objectDesign.SortingLayer,
+                    EnvironmentId = objectDesign.EnvironmentId,
+                };
+
+                var query = @"
+            INSERT INTO [Object2D] (PrefabId, PositionX, PositionY, ScaleX, ScaleY, RotationZ, SortingLayer, EnvironmentId)
+            VALUES (@PrefabId, @PositionX, @PositionY, @ScaleX, @ScaleY, @RotationZ, @SortingLayer, @EnvironmentId);
+            SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                var environmentId = await sqlConnection.QuerySingleAsync<int>(query, parameters);
+
+                return new Object2D
+                {
+                    Id = environmentId,
+                    PrefabId = objectDesign.PrefabId,
+                    PositionX = objectDesign.PositionX,
+                    PositionY = objectDesign.PositionY,
+                    ScaleX = objectDesign.ScaleX,
+                    ScaleY = objectDesign.ScaleY,
+                    RotationZ = objectDesign.RotationZ,
+                    SortingLayer = objectDesign.SortingLayer,
+                    EnvironmentId = objectDesign.EnvironmentId
+                };
+            }
+        }
     }
 }
