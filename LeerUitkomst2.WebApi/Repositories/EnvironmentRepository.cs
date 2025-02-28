@@ -13,7 +13,7 @@ namespace ProjectMap.WebApi.Repositories
             this.sqlConnectionString = sqlConnectionString;
         }
 
-        public async Task<int> GetAmountByUser(string userId)
+        public virtual async Task<int> GetAmountByUser(string userId)
         {
             using (SqlConnection sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -22,7 +22,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task<IEnumerable<Environment2D>> FindEnvironmentByName(string userId, string name)
+        public virtual async Task<IEnumerable<Environment2D>> FindEnvironmentByName(string userId, string name)
         {
             using (SqlConnection sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -31,7 +31,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task<Environment2D> CreateEnvironmentByUser(Environment2DTemplate environment, string userId)
+        public virtual async Task<Environment2D> CreateEnvironmentByUser(Environment2DTemplate environment, string userId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -61,7 +61,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task<Environment2D> GetSingleByUser(string userId, int requestedId)
+        public virtual async Task<Environment2D> GetSingleByUser(string userId, int requestedId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -69,7 +69,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task<IEnumerable<Environment2D>> GetEnvironmentByUser(string userId)
+        public virtual async Task<IEnumerable<Environment2D>> GetEnvironmentByUser(string userId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -78,7 +78,7 @@ namespace ProjectMap.WebApi.Repositories
         }
 
 
-        public async Task<Environment2D?> ReadAsync(int id)
+        public virtual async Task<Environment2D?> ReadAsync(int id)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -86,7 +86,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task<IEnumerable<Environment2D>> ReadAsync()
+        public virtual async Task<IEnumerable<Environment2D>> ReadAsync()
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -94,7 +94,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task UpdateAsync(Environment2D environment)
+        public virtual async Task UpdateAsync(Environment2D environment)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -108,7 +108,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task<DataBoolean> DeleteAsync(int id)
+        public virtual async Task<DataBoolean> DeleteAsync(int id)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
