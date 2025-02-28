@@ -44,6 +44,7 @@ public class EnvironmentController : ControllerBase
             return BadRequest(allowedOrNot.Message);
         }
         var createdEnvironment = await _environment2DRepository.CreateEnvironmentByUser(environment, userId);
+        return BadRequest();
         return Ok(createdEnvironment);
     }
 
