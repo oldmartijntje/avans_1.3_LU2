@@ -73,6 +73,8 @@ namespace LeerUitkomst2.WebApi.Tests
         [DataRow("Testing Environment", 1000, 50)]
         [DataRow("Testing Environment", 50, 2)]
         [DataRow("Testing Environment", 50, 2000)]
+        [DataRow("12345678901234567890123456", 50, 50)]
+        [DataRow("", 50, 50)]
         public async Task Add_EnvironmentIsNotAllowed_ReturnsBadRequest(string name, int height, int length)
         {
             // Arrange
@@ -87,6 +89,8 @@ namespace LeerUitkomst2.WebApi.Tests
             _environmentRepositoryMock.Setup(repo => repo.GetAmountByUser("user123")).ReturnsAsync(2);
             _environmentRepositoryMock.Setup(repo => repo.FindEnvironmentByName("user123", "Test Environment")).ReturnsAsync(new List<Environment2D> { new Environment2D() });
             _environmentRepositoryMock.Setup(repo => repo.FindEnvironmentByName("user123", "Testing Environment")).ReturnsAsync(new List<Environment2D>());
+            _environmentRepositoryMock.Setup(repo => repo.FindEnvironmentByName("user123", "12345678901234567890123456")).ReturnsAsync(new List<Environment2D>());
+            _environmentRepositoryMock.Setup(repo => repo.FindEnvironmentByName("user123", "")).ReturnsAsync(new List<Environment2D>());
 
             // Act
             var result = await _controller.Add(environment);
@@ -126,7 +130,7 @@ namespace LeerUitkomst2.WebApi.Tests
             // Arrange
             int environmentId = 1;
             _authServiceMock.Setup(auth => auth.GetCurrentAuthenticatedUserId()).Returns("user123");
-            _environmentRepositoryMock.Setup(repo => repo.GetSingleByUser("user123", environmentId)).ReturnsAsync(new Environment2D { Id = environmentId, UserId = "user123" });
+            _environmentRepositoryMock.Setup(repo => repo.GetSingleEnvironmentByUser("user123", environmentId)).ReturnsAsync(new Environment2D { Id = environmentId, UserId = "user123" });
             _environmentRepositoryMock.Setup(repo => repo.DeleteAsync(environmentId)).ReturnsAsync(new DataBoolean(true, "Success"));
 
             // Act
@@ -142,7 +146,7 @@ namespace LeerUitkomst2.WebApi.Tests
             // Arrange
             int environmentId = 1;
             _authServiceMock.Setup(auth => auth.GetCurrentAuthenticatedUserId()).Returns("user123");
-            _environmentRepositoryMock.Setup(repo => repo.GetSingleByUser("user123", environmentId)).ReturnsAsync((Environment2D)null);
+            _environmentRepositoryMock.Setup(repo => repo.GetSingleEnvironmentByUser("user123", environmentId)).ReturnsAsync((Environment2D)null);
 
             // Act
             var result = await _controller.Update(environmentId);

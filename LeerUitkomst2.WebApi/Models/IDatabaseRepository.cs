@@ -1,7 +1,7 @@
 ﻿namespace LeerUitkomst2.WebApi.Models
 {
-    public interface IDatabaseRepository<T>
+    public interface IDatabaseRepository
     {
-        Task<T> GetSingleByUser(string userId, int requestedId);
+        Task<Environment2D> GetSingleEnvironmentByUser(string userId, int requestedId);
     }
 }

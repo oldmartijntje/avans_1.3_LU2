@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace ProjectMap.WebApi.Repositories
 {
-    public class EnvironmentRepository : IDatabaseRepository<Environment2D>
+    public class EnvironmentRepository : IDatabaseRepository
     {
         private readonly string sqlConnectionString;
 
@@ -61,7 +61,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public virtual async Task<Environment2D> GetSingleByUser(string userId, int requestedId)
+        public virtual async Task<Environment2D> GetSingleEnvironmentByUser(string userId, int requestedId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {

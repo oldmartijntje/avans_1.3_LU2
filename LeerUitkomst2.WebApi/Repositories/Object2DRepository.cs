@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace ProjectMap.WebApi.Repositories
 {
-    public class Object2DRepository : IDatabaseRepository<Object2D>
+    public class Object2DRepository : IDatabaseRepository
     {
         private readonly string sqlConnectionString;
 
@@ -22,9 +22,18 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        Task<Object2D> IDatabaseRepository<Object2D>.GetSingleByUser(string userId, int requestedId)
+        public virtual async Task<Environment2D> GetSingleEnvironmentByUser(string userId, int requestedId)
         {
-            throw new NotImplementedException();
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                string query = @"
+            SELECT e.* 
+            FROM [Environment2D] e
+            INNER JOIN [Object2D] o ON e.Id = o.EnvironmentId
+            WHERE o.Id = @requestedId";
+
+                return await sqlConnection.QuerySingleOrDefaultAsync<Environment2D>(query, new { requestedId });
+            }
         }
 
         public async Task<Object2D> CreateObject(Object2DTemplate objectDesign)
@@ -62,6 +71,24 @@ namespace ProjectMap.WebApi.Repositories
                     SortingLayer = objectDesign.SortingLayer,
                     EnvironmentId = objectDesign.EnvironmentId
                 };
+            }
+        }
+
+        public virtual async Task UpdateAsync(Object2D environment)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                await sqlConnection.ExecuteAsync("UPDATE [Object2D] SET " +
+                                                 "PrefabId = @PrefabId, " +
+                                                 "PositionX = @PositionX, " +
+                                                 "PositionY = @PositionY, " +
+                                                 "ScaleX = @ScaleX " +
+                                                 "ScaleY = @ScaleY " +
+                                                 "RotationZ = @RotationZ " +
+                                                 "SortingLayer = @SortingLayer " +
+                                                 "WHERE Id = @Id"
+                                                 , environment);
+
             }
         }
     }

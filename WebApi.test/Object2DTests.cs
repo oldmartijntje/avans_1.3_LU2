@@ -1,4 +1,4 @@
-﻿namespace WebApi.test
+﻿namespace LeerUitkomst2.WebApi.test
 {
     [TestClass]
     public sealed class EnvironmentTests

@@ -36,7 +36,7 @@ public class Object2DController : ControllerBase
         {
             return BadRequest();
         }
-        DatabaseBundle<Environment2D> dataBundle = new DatabaseBundle<Environment2D>()
+        DatabaseBundle dataBundle = new DatabaseBundle()
         {
             UserId = userId,
             DatabaseRepository = _environment2DRepository,
@@ -53,6 +53,32 @@ public class Object2DController : ControllerBase
 
     }
 
+    [HttpPut(Name = "EditObject")]
+    public async Task<ActionResult> Update(Object2D template)
+    {
+        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        if (userId == null)
+        {
+            return BadRequest();
+        }
+        DatabaseBundle dataBundle = new DatabaseBundle()
+        {
+            UserId = userId,
+            DatabaseRepository = _object2DRepository,
+            RequestedId = template.Id
+        };
+        var authResponse = await Validator.Environment2DAccessCheck(dataBundle);
+        this._logger.LogInformation($"User '{userId}' tried to access '{template.EnvironmentId}': '{authResponse.LoggerMessage}'");
+        if (authResponse.Value == false)
+        {
+            return BadRequest(authResponse.Message);
+        }
+        Environment2D realEnvironment = authResponse.ExtraData as Environment2D;
+        template.EnvironmentId = realEnvironment.Id;
+        var result = await this._object2DRepository.CreateObject(template);
+        return Ok(result);
+
+    }
 
     //[HttpGet(Name = "ReadEnvironments")]
     //public async Task<ActionResult<IEnumerable<Environment2D>>> Get()

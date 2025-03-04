@@ -67,7 +67,7 @@ public class EnvironmentController : ControllerBase
         {
             return BadRequest();
         }
-        DatabaseBundle<Environment2D> dataBundle = new DatabaseBundle<Environment2D>()
+        DatabaseBundle dataBundle = new DatabaseBundle()
         {
             UserId = userId,
             DatabaseRepository = _environment2DRepository,
@@ -97,7 +97,7 @@ public class EnvironmentController : ControllerBase
         {
             return BadRequest();
         }
-        DatabaseBundle<Environment2D> dataBundle = new DatabaseBundle<Environment2D>()
+        DatabaseBundle dataBundle = new DatabaseBundle()
         {
             UserId = userId,
             DatabaseRepository = _environment2DRepository,

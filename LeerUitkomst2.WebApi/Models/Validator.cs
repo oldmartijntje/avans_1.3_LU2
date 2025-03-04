@@ -52,9 +52,9 @@
         /// </summary>
         /// <param name="dataBundle">This knows who the user is, what they want to access, and what DB to use</param>
         /// <returns></returns>
-        public static async Task<DataBoolean> Environment2DAccessCheck(DatabaseBundle<Environment2D> dataBundle)
+        public static async Task<DataBoolean> Environment2DAccessCheck(DatabaseBundle dataBundle)
         {
-            var environment = await dataBundle.DatabaseRepository.GetSingleByUser(dataBundle.UserId, dataBundle.RequestedId);
+            var environment = await dataBundle.DatabaseRepository.GetSingleEnvironmentByUser(dataBundle.UserId, dataBundle.RequestedId);
             if (environment == null)
             {
                 return new DataBoolean(false, "This environment does not exist in this context.", "404");
