@@ -68,19 +68,25 @@ namespace LeerUitkomst2.WebApi.Tests
         }
 
         [TestMethod]
-        public async Task Add_EnvironmentAlreadyExists_ReturnsBadRequest()
+        [DataRow("Test Environment", 50, 50)]
+        [DataRow("Testing Environment", 1, 50)]
+        [DataRow("Testing Environment", 1000, 50)]
+        [DataRow("Testing Environment", 50, 2)]
+        [DataRow("Testing Environment", 50, 2000)]
+        public async Task Add_EnvironmentIsNotAllowed_ReturnsBadRequest(string name, int height, int length)
         {
             // Arrange
             var environment = new Environment2DTemplate
             {
-                Name = "Test Environment",
-                MaxHeight = 50,
-                MaxLength = 100
+                Name = name,
+                MaxHeight = height,
+                MaxLength = length
             };
 
             _authServiceMock.Setup(auth => auth.GetCurrentAuthenticatedUserId()).Returns("user123");
             _environmentRepositoryMock.Setup(repo => repo.GetAmountByUser("user123")).ReturnsAsync(2);
             _environmentRepositoryMock.Setup(repo => repo.FindEnvironmentByName("user123", "Test Environment")).ReturnsAsync(new List<Environment2D> { new Environment2D() });
+            _environmentRepositoryMock.Setup(repo => repo.FindEnvironmentByName("user123", "Testing Environment")).ReturnsAsync(new List<Environment2D>());
 
             // Act
             var result = await _controller.Add(environment);
@@ -88,7 +94,30 @@ namespace LeerUitkomst2.WebApi.Tests
             // Assert
             var badRequestResult = result as BadRequestObjectResult;
             Assert.IsNotNull(badRequestResult);
-            Assert.AreEqual("Only 1 environment allowed with the same name.", badRequestResult.Value);
+        }
+
+        [TestMethod]
+        [DataRow("Testing Environment", 50, 50)]
+        public async Task Add_Environment_TooMany_ReturnsBadRequest(string name, int height, int length)
+        {
+            // Arrange
+            var environment = new Environment2DTemplate
+            {
+                Name = name,
+                MaxHeight = height,
+                MaxLength = length
+            };
+
+            _authServiceMock.Setup(auth => auth.GetCurrentAuthenticatedUserId()).Returns("user123");
+            _environmentRepositoryMock.Setup(repo => repo.GetAmountByUser("user123")).ReturnsAsync(10);
+            _environmentRepositoryMock.Setup(repo => repo.FindEnvironmentByName("user123", "Testing Environment")).ReturnsAsync(new List<Environment2D>());
+
+            // Act
+            var result = await _controller.Add(environment);
+
+            // Assert
+            var badRequestResult = result as BadRequestObjectResult;
+            Assert.IsNotNull(badRequestResult);
         }
 
         [TestMethod]
