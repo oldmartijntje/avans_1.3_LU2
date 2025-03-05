@@ -82,9 +82,9 @@ namespace ProjectMap.WebApi.Repositories
                                                  "PrefabId = @PrefabId, " +
                                                  "PositionX = @PositionX, " +
                                                  "PositionY = @PositionY, " +
-                                                 "ScaleX = @ScaleX " +
-                                                 "ScaleY = @ScaleY " +
-                                                 "RotationZ = @RotationZ " +
+                                                 "ScaleX = @ScaleX, " +
+                                                 "ScaleY = @ScaleY, " +
+                                                 "RotationZ = @RotationZ, " +
                                                  "SortingLayer = @SortingLayer " +
                                                  "WHERE Id = @Id"
                                                  , environment);

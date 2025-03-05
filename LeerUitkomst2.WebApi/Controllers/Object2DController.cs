@@ -48,6 +48,12 @@ public class Object2DController : ControllerBase
         {
             return BadRequest(authResponse.Message);
         }
+        var validObjectResponse = Validator.IsValidObject2D(template, authResponse.ExtraData as Environment2D);
+        this._logger.LogInformation($"User '{userId}' tried to create object: '{validObjectResponse.LoggerMessage}'");
+        if (validObjectResponse.Value == false)
+        {
+            return BadRequest(validObjectResponse.Message);
+        }
         var result = await this._object2DRepository.CreateObject(template);
         return Ok(result);
 
@@ -73,10 +79,20 @@ public class Object2DController : ControllerBase
         {
             return BadRequest(authResponse.Message);
         }
-        Environment2D realEnvironment = authResponse.ExtraData as Environment2D;
+        Environment2D? realEnvironment = authResponse.ExtraData as Environment2D;
+        if (realEnvironment == null)
+        {
+            return BadRequest("Environment = null");
+        }
         template.EnvironmentId = realEnvironment.Id;
-        var result = await this._object2DRepository.CreateObject(template);
-        return Ok(result);
+        var validObjectResponse = Validator.IsValidObject2D(template, realEnvironment);
+        this._logger.LogInformation($"User '{userId}' tried to edit object: '{validObjectResponse.LoggerMessage}'");
+        if (validObjectResponse.Value == false)
+        {
+            return BadRequest(validObjectResponse.Message);
+        }
+        await this._object2DRepository.UpdateAsync(template);
+        return Ok();
 
     }
 
