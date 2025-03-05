@@ -10,6 +10,11 @@
         public float RotationZ { get; set; }
         public int SortingLayer { get; set; }
         public int EnvironmentId { get; set; }
+
+        public void FixRotation()
+        {
+            this.RotationZ = this.RotationZ % 360;
+        }
     }
 
     public class Object2D: Object2DTemplate

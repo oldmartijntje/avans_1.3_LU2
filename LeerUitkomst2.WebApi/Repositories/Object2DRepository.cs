@@ -13,7 +13,7 @@ namespace ProjectMap.WebApi.Repositories
             this.sqlConnectionString = sqlConnectionString;
         }
 
-        public async Task<IEnumerable<Object2D>> GetAllByEnvironmentId(int environmentId)
+        public virtual async Task<IEnumerable<Object2D>> GetAllByEnvironmentId(int environmentId)
         {
             using (SqlConnection sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -22,7 +22,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public virtual async Task<Environment2D> GetSingleEnvironmentByUser(string userId, int requestedId)
+        public virtual async Task<Environment2D?> GetSingleEnvironmentByUser(string userId, int requestedId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -36,7 +36,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public async Task<Object2D> CreateObject(Object2DTemplate objectDesign)
+        public virtual async Task<Object2D> CreateObject(Object2DTemplate objectDesign)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -89,6 +89,23 @@ namespace ProjectMap.WebApi.Repositories
                                                  "WHERE Id = @Id"
                                                  , environment);
 
+            }
+        }
+
+        public virtual async Task<Object2D?> ReadAsync(int id)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                return await sqlConnection.QuerySingleOrDefaultAsync<Object2D>("SELECT * FROM [Object2D] WHERE Id = @Id", new { id });
+            }
+        }
+
+        public virtual async Task DeleteAsync(int id)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                var query = "DELETE FROM [Object2D] WHERE Id = @Id;";
+                await sqlConnection.ExecuteAsync(query, new { id });
             }
         }
     }

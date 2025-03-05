@@ -2,6 +2,7 @@ using LeerUitkomst2.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using MiNET.Items;
 using ProjectMap.WebApi.Repositories;
 using System;
 
@@ -14,12 +15,12 @@ public class Object2DController : ControllerBase
 {
     private readonly EnvironmentRepository _environment2DRepository;
     private readonly Object2DRepository _object2DRepository;
-    private readonly ILogger<EnvironmentController> _logger;
+    private readonly ILogger<Object2DController> _logger;
     private readonly IAuthenticationService _authService;
 
     public Object2DController(EnvironmentRepository environmentRepository,
         Object2DRepository objectRepository,
-        ILogger<EnvironmentController> logger,
+        ILogger<Object2DController> logger,
         IAuthenticationService authService)
     {
         _environment2DRepository = environmentRepository;
@@ -36,6 +37,7 @@ public class Object2DController : ControllerBase
         {
             return BadRequest();
         }
+        template.FixRotation();
         DatabaseBundle dataBundle = new DatabaseBundle()
         {
             UserId = userId,
@@ -43,7 +45,7 @@ public class Object2DController : ControllerBase
             RequestedId = template.EnvironmentId
         };
         var authResponse = await Validator.Environment2DAccessCheck(dataBundle);
-        this._logger.LogInformation($"User '{userId}' tried to access '{template.EnvironmentId}': '{authResponse.LoggerMessage}'");
+        this._logger.LogInformation($"User '{userId}' tried to access env '{template.EnvironmentId}': '{authResponse.LoggerMessage}'");
         if (authResponse.Value == false)
         {
             return BadRequest(authResponse.Message);
@@ -67,6 +69,7 @@ public class Object2DController : ControllerBase
         {
             return BadRequest();
         }
+        template.FixRotation();
         DatabaseBundle dataBundle = new DatabaseBundle()
         {
             UserId = userId,
@@ -74,7 +77,7 @@ public class Object2DController : ControllerBase
             RequestedId = template.Id
         };
         var authResponse = await Validator.Environment2DAccessCheck(dataBundle);
-        this._logger.LogInformation($"User '{userId}' tried to access '{template.EnvironmentId}': '{authResponse.LoggerMessage}'");
+        this._logger.LogInformation($"User '{userId}' tried to access env '{template.EnvironmentId}': '{authResponse.LoggerMessage}'");
         if (authResponse.Value == false)
         {
             return BadRequest(authResponse.Message);
@@ -95,6 +98,33 @@ public class Object2DController : ControllerBase
         return Ok();
 
     }
+    
+    [HttpDelete("{ObjectId}", Name = "DeleteObjectById")]
+    public async Task<IActionResult> Remove(int ObjectId)
+    {
+        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        DatabaseBundle dataBundle = new DatabaseBundle()
+        {
+            UserId = userId,
+            DatabaseRepository = _object2DRepository,
+            RequestedId = ObjectId
+        };
+        var authResponse = await Validator.Environment2DAccessCheck(dataBundle);
+        this._logger.LogInformation($"User '{userId}' tried to delete obj '{ObjectId}': '{authResponse.LoggerMessage}'");
+        if (authResponse.Value == false)
+        {
+            return BadRequest(authResponse.Message);
+        }
+        var existingObject = await _object2DRepository.ReadAsync(ObjectId);
+
+        if (existingObject == null)
+            return NotFound();
+
+        await _object2DRepository.DeleteAsync(ObjectId);
+
+        return Ok();
+    }
+
 
     //[HttpGet(Name = "ReadEnvironments")]
     //public async Task<ActionResult<IEnumerable<Environment2D>>> Get()

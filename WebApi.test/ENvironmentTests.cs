@@ -68,13 +68,13 @@ namespace LeerUitkomst2.WebApi.Tests
         }
 
         [TestMethod]
-        [DataRow("Test Environment", 50, 50)]
-        [DataRow("Testing Environment", 1, 50)]
-        [DataRow("Testing Environment", 1000, 50)]
-        [DataRow("Testing Environment", 50, 2)]
-        [DataRow("Testing Environment", 50, 2000)]
-        [DataRow("12345678901234567890123456", 50, 50)]
-        [DataRow("", 50, 50)]
+        [DataRow("Test Environment", 50, 50)] // already exists
+        [DataRow("Testing Environment", 1, 50)] // maxheight too small
+        [DataRow("Testing Environment", 1000, 50)] // maxheight too big
+        [DataRow("Testing Environment", 50, 2)] // maxlength too small
+        [DataRow("Testing Environment", 50, 2000)] // maxlength too big
+        [DataRow("12345678901234567890123456", 50, 50)] // name length too long
+        [DataRow("", 50, 50)] // name length too short
         public async Task Add_EnvironmentIsNotAllowed_ReturnsBadRequest(string name, int height, int length)
         {
             // Arrange
@@ -137,7 +137,7 @@ namespace LeerUitkomst2.WebApi.Tests
             var result = await _controller.Update(environmentId);
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsInstanceOfType(result, typeof(OkResult));
         }
 
         [TestMethod]

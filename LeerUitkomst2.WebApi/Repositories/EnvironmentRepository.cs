@@ -61,7 +61,7 @@ namespace ProjectMap.WebApi.Repositories
             }
         }
 
-        public virtual async Task<Environment2D> GetSingleEnvironmentByUser(string userId, int requestedId)
+        public virtual async Task<Environment2D?> GetSingleEnvironmentByUser(string userId, int requestedId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {

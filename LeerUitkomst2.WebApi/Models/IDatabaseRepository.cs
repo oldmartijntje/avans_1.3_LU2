@@ -2,6 +2,6 @@
 {
     public interface IDatabaseRepository
     {
-        Task<Environment2D> GetSingleEnvironmentByUser(string userId, int requestedId);
+        Task<Environment2D?> GetSingleEnvironmentByUser(string userId, int requestedId);
     }
 }

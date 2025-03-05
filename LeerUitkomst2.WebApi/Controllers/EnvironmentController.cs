@@ -115,7 +115,7 @@ public class EnvironmentController : ControllerBase
         {
             return BadRequest(deleteSuccess.Message);
         }
-        return Ok(deleteSuccess.Message);
+        return Ok();
     }
 
     //[HttpGet(Name = "ReadEnvironments")]

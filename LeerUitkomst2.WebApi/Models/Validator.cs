@@ -59,6 +59,10 @@
         /// <returns></returns>
         public static async Task<DataBoolean> Environment2DAccessCheck(DatabaseBundle dataBundle)
         {
+            if (dataBundle.UserId == null)
+            {
+                return new DataBoolean(false, "unauthorized", "no user id");
+            }
             var environment = await dataBundle.DatabaseRepository.GetSingleEnvironmentByUser(dataBundle.UserId, dataBundle.RequestedId);
             if (environment == null)
             {
@@ -72,6 +76,12 @@
 
         }
 
+        /// <summary>
+        /// Checks wether it is a valid Object2D type
+        /// </summary>
+        /// <param name="object2D">The Object2D</param>
+        /// <param name="environment"></param>
+        /// <returns></returns>
         public static DataBoolean IsValidObject2D(Object2D object2D, Environment2D? environment)
         {
             if (object2D == null)
@@ -88,6 +98,13 @@
             }
             return IsValidObject2D(object2D as Object2DTemplate, environment);
         }
+
+        /// <summary>
+        /// Checks wether it is a valid Object2D type
+        /// </summary>
+        /// <param name="object2D">The Object2D</param>
+        /// <param name="environment">The env it is in.</param>
+        /// <returns></returns>
         public static DataBoolean IsValidObject2D(Object2DTemplate object2D, Environment2D? environment)
         {
             if (object2D == null)
