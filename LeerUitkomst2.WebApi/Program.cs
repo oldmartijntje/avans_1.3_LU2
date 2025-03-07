@@ -1,7 +1,8 @@
-using ProjectMap.WebApi.Repositories;
 using static System.Net.Mime.MediaTypeNames;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using LeerUitkomst2.WebApi.Repositories;
+using LeerUitkomst2.WebApi.Services;
 using Microsoft.AspNetCore.Identity;
 
 

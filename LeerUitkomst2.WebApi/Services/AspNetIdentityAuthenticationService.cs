@@ -1,5 +1,6 @@
 using System.Security.Claims;
 
+namespace LeerUitkomst2.WebApi.Services;
 
 /// <summary>
 /// Based on the example code provided by Microsoft
@@ -17,6 +18,10 @@ public class AspNetIdentityAuthenticationService : IAuthenticationService
     /// <inheritdoc />
     public string? GetCurrentAuthenticatedUserId()
     {
+        if (_httpContextAccessor.HttpContext == null)
+        {
+            return null;
+        }
         // Returns the aspnet_User.Id of the authenticated user
         return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
     }

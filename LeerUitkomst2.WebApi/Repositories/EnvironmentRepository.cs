@@ -2,7 +2,7 @@
 using LeerUitkomst2.WebApi.Models;
 using Microsoft.Data.SqlClient;
 
-namespace ProjectMap.WebApi.Repositories
+namespace LeerUitkomst2.WebApi.Repositories
 {
     public class EnvironmentRepository : IDatabaseRepository
     {

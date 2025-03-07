@@ -1,3 +1,5 @@
+    namespace LeerUitkomst2.WebApi.Services;
+
     public interface IAuthenticationService
     {
         /// <summary>
