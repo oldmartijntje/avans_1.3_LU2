@@ -63,7 +63,15 @@
             {
                 return new DataBoolean(false, "unauthorized", "no user id");
             }
-            var environment = await dataBundle.DatabaseRepository.GetSingleEnvironmentByUser(dataBundle.UserId, dataBundle.RequestedId);
+            if (dataBundle.RequestedId == null)
+            {
+                return new DataBoolean(false, "400", "nothing is requested.");
+            }
+            if (dataBundle.DatabaseRepository == null)
+            {
+                return new DataBoolean(false, "Internal server error", "dataBundle.DatabaseRepository == null??");
+            }
+            var environment = await dataBundle.DatabaseRepository.GetSingleEnvironmentByUser(dataBundle.UserId, (int)dataBundle.RequestedId);
             if (environment == null)
             {
                 return new DataBoolean(false, "This environment does not exist in this context.", "404");
@@ -82,7 +90,7 @@
         /// <param name="object2D">The Object2D</param>
         /// <param name="environment"></param>
         /// <returns></returns>
-        public static DataBoolean IsValidObject2D(Object2D object2D, Environment2D? environment)
+        public static DataBoolean IsValidObject2D(Object2D? object2D, Environment2D? environment)
         {
             if (object2D == null)
             {
@@ -105,7 +113,7 @@
         /// <param name="object2D">The Object2D</param>
         /// <param name="environment">The env it is in.</param>
         /// <returns></returns>
-        public static DataBoolean IsValidObject2D(Object2DTemplate object2D, Environment2D? environment)
+        public static DataBoolean IsValidObject2D(Object2DTemplate? object2D, Environment2D? environment)
         {
             if (object2D == null)
             {

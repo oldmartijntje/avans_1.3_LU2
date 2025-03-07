@@ -2,7 +2,6 @@ using LeerUitkomst2.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectMap.WebApi.Repositories;
-using System;
 
 namespace LeerUitkomst2.WebApi.Controllers;
 
@@ -28,9 +27,9 @@ public class EnvironmentController : ControllerBase
     }
 
     [HttpPost(Name = "CreateEnvironment")]
-    public async Task<ActionResult> Add(Environment2DTemplate environment)
+    public async Task<ActionResult> Add(Environment2DTemplate? environment)
     {
-        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        string? userId = this._authService.GetCurrentAuthenticatedUserId();
         if (environment == null || userId == null)
         {
             return BadRequest();
@@ -50,7 +49,7 @@ public class EnvironmentController : ControllerBase
     [HttpGet(Name = "GetEnvironments")]
     public async Task<ActionResult<IEnumerable<Environment2D>>> Get()
     {
-        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        string? userId = this._authService.GetCurrentAuthenticatedUserId();
         if (userId == null)
         {
             return BadRequest();
@@ -62,7 +61,7 @@ public class EnvironmentController : ControllerBase
     [HttpGet("{environmentId}", Name = "GetEnvironmentData")]
     public async Task<ActionResult<IEnumerable<Environment2D>>> Get(int environmentId)
     {
-        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        string? userId = this._authService.GetCurrentAuthenticatedUserId();
         if (userId == null)
         {
             return BadRequest();
@@ -92,7 +91,7 @@ public class EnvironmentController : ControllerBase
     [HttpDelete("{environmentId}", Name = "DeleteEnvironmentById")]
     public async Task<IActionResult> Update(int environmentId)
     {
-        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        string? userId = this._authService.GetCurrentAuthenticatedUserId();
         if (userId == null)
         {
             return BadRequest();

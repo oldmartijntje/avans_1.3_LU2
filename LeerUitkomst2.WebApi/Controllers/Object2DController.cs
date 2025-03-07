@@ -1,10 +1,7 @@
 using LeerUitkomst2.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
-using MiNET.Items;
 using ProjectMap.WebApi.Repositories;
-using System;
 
 namespace LeerUitkomst2.WebApi.Controllers;
 
@@ -32,7 +29,7 @@ public class Object2DController : ControllerBase
     [HttpPost(Name = "CreateObject")]
     public async Task<ActionResult> Add(Object2DTemplate template)
     {
-        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        string? userId = this._authService.GetCurrentAuthenticatedUserId();
         if (userId == null)
         {
             return BadRequest();
@@ -64,7 +61,7 @@ public class Object2DController : ControllerBase
     [HttpPut(Name = "EditObject")]
     public async Task<ActionResult> Update(Object2D template)
     {
-        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        string? userId = this._authService.GetCurrentAuthenticatedUserId();
         if (userId == null)
         {
             return BadRequest();
@@ -99,28 +96,28 @@ public class Object2DController : ControllerBase
 
     }
     
-    [HttpDelete("{ObjectId}", Name = "DeleteObjectById")]
-    public async Task<IActionResult> Remove(int ObjectId)
+    [HttpDelete("{objectId}", Name = "DeleteObjectById")]
+    public async Task<IActionResult> Remove(int objectId)
     {
-        string userId = this._authService.GetCurrentAuthenticatedUserId();
+        string? userId = this._authService.GetCurrentAuthenticatedUserId();
         DatabaseBundle dataBundle = new DatabaseBundle()
         {
             UserId = userId,
             DatabaseRepository = _object2DRepository,
-            RequestedId = ObjectId
+            RequestedId = objectId
         };
         var authResponse = await Validator.Environment2DAccessCheck(dataBundle);
-        this._logger.LogInformation($"User '{userId}' tried to delete obj '{ObjectId}': '{authResponse.LoggerMessage}'");
+        this._logger.LogInformation($"User '{userId}' tried to delete obj '{objectId}': '{authResponse.LoggerMessage}'");
         if (authResponse.Value == false)
         {
             return BadRequest(authResponse.Message);
         }
-        var existingObject = await _object2DRepository.ReadAsync(ObjectId);
+        var existingObject = await _object2DRepository.ReadAsync(objectId);
 
         if (existingObject == null)
             return NotFound();
 
-        await _object2DRepository.DeleteAsync(ObjectId);
+        await _object2DRepository.DeleteAsync(objectId);
 
         return Ok();
     }
