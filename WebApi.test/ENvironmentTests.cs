@@ -2,9 +2,10 @@
 using Moq;
 using LeerUitkomst2.WebApi.Controllers;
 using LeerUitkomst2.WebApi.Models;
-using ProjectMap.WebApi.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LeerUitkomst2.WebApi.Repositories;
+using LeerUitkomst2.WebApi.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
