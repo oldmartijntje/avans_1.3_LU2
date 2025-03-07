@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using LeerUitkomst2.WebApi.Repositories;
 using LeerUitkomst2.WebApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -102,6 +103,9 @@ catImage.addEventListener('click', () => {{
   </script>
 </body>
 </html>", "text/html"));
+
+app.MapGet("/account/checkAccessToken", [Authorize] () => Results.Content("{\"authorized\": true}", "application/json"));
+
 
 app.UseHttpsRedirection();
 
