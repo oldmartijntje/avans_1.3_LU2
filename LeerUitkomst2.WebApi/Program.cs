@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost3030", builder =>
     {
-        builder.WithOrigins("http://localhost:3030")
+        builder.WithOrigins("https://oldmartijntje.github.io")
                .AllowAnyHeader()
                .AllowAnyMethod();
     });
@@ -58,10 +58,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
     
 }
-app.UseSwagger();
-app.UseSwaggerUI();
+
 
 app.UseCors("AllowLocalhost3030");
 
