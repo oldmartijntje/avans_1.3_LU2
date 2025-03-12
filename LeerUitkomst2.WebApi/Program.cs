@@ -45,9 +45,15 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost3030", builder =>
     {
-        builder.WithOrigins("https://oldmartijntje.github.io")
+        builder.WithOrigins("http://localhost:3030")
                .AllowAnyHeader()
                .AllowAnyMethod();
+    });
+    options.AddPolicy("GitHubPagesPolicy", builder =>
+    {
+        builder.WithOrigins("https://oldmartijntje.github.io")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 // And then in the pipeline:
@@ -64,6 +70,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
+app.UseCors("GitHubPagesPolicy");
 app.UseCors("AllowLocalhost3030");
 
 string imageUrl = "https://i.imgur.com/JP3km0A.jpeg";
